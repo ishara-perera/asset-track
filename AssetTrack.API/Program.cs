@@ -1,26 +1,33 @@
 using AssetTrack.API.Data;
+using AssetTrack.API.Repositories;
+using AssetTrack.API.Repository; // We only need the plural namespace
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Database Configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+// 2. Add Controllers
 builder.Services.AddControllers();
 
+// 3. DEPENDENCY INJECTION REGISTRATION
+// This line creates the map: Interface -> Class
+builder.Services.AddScoped<IAssetsRepository, AssetsRepository>();
 
-builder.Services.AddEndpointsApiExplorer(); // <--- Add this
-builder.Services.AddSwaggerGen();           // <--- Add this
+// 4. Swagger Setup
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 2. Enable the Swagger UI
-if (app.Environment.IsDevelopment()) // (Optional: only run in dev mode)
+// 5. Pipeline Setup
+if (app.Environment.IsDevelopment()) 
 {
-    app.UseSwagger();               // <--- Generates the JSON file
-    app.UseSwaggerUI();             // <--- Generates the web page
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
