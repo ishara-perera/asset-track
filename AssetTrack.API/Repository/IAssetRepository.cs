@@ -1,8 +1,8 @@
 ﻿using AssetTrack.API.Models;
 
-namespace AssetTrack.API.Repositories 
+namespace AssetTrack.API.Repository 
 {
-    public interface IAssetsRepository 
+    public interface IAssetRepository 
     {
         Task<List<Asset>> GetAllAsync();
 

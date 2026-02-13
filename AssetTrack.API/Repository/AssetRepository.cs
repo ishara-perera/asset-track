@@ -1,19 +1,13 @@
 ﻿using AssetTrack.API.Data;
 using AssetTrack.API.Models;
-using AssetTrack.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetTrack.API.Repository;
 
-public class AssetsRepository : IAssetsRepository
+public class AssetRepository(AppDbContext context) : IAssetRepository
 {
-    private readonly AppDbContext _context;
-
-    public AssetsRepository(AppDbContext context)
-    {
-        this._context = context;
-    }
-
+    private readonly AppDbContext _context = context;
+    
     public async Task<List<Asset>> GetAllAsync()
     {
         return await _context.Assets.ToListAsync();
@@ -21,7 +15,9 @@ public class AssetsRepository : IAssetsRepository
 
     public async Task<Asset?> GetAssetByIdAsync(int id)
     {
-        return await _context.Assets.FindAsync(id);    }
+        return await _context.Assets.FindAsync(id);
+        
+    }
 
     public async Task<Asset> CreateAsync(Asset asset)
     {
