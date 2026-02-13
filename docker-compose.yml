@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ./AssetTrack.API
+      dockerfile: Dockerfile
+    container_name: assettrack-api
+    ports:
+      - "5000:8080"
+    depends_on:
+      - mysql
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    container_name: assettrack-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: AssetTrackDb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
