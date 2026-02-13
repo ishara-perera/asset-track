@@ -1,10 +1,9 @@
 ﻿using AssetTrack.API.Data;
 using AssetTrack.API.Models;
 using AssetTrack.API.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace DefaultNamespace;
+namespace AssetTrack.API.Repository;
 
 public class AssetsRepository : IAssetsRepository
 {
@@ -33,11 +32,6 @@ public class AssetsRepository : IAssetsRepository
 
     public async Task<Asset?> UpdateAssetAsync(int id, Asset asset)
     {
-        if (id != asset.Id)
-        {
-            return null;
-        }
-
         _context.Entry(asset).State = EntityState.Modified;
 
         try
@@ -46,9 +40,9 @@ public class AssetsRepository : IAssetsRepository
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!_context.Assets.Any(e => e.Id == id))
+            if (!await _context.Assets.AnyAsync(e => e.Id == id))
             {
-                return null;
+                return null; 
             }
             else
             {
@@ -57,13 +51,7 @@ public class AssetsRepository : IAssetsRepository
         }
 
         return asset;
-    }
-
-    public Task DeleteAssetAsync(Type id)
-    {
-        throw new NotImplementedException();
-    }
-
+    }    
     public async Task DeleteAssetAsync(int id)
     {
         var asset = await _context.Assets.FindAsync(id);
