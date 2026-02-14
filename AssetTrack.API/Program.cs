@@ -1,7 +1,6 @@
 using AssetTrack.API.Data;
-using AssetTrack.API.Repositories;
 using AssetTrack.API.Repository;
-using AssetTrack.API.Services; // We only need the plural namespace
+using AssetTrack.API.Services; 
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,22 +9,21 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IAssetRepository, AssetRepository>();
+builder.Services.AddScoped<IAssetService, AssetService>();
 
-builder.Services.AddScoped<IAssetsRepository, AssetsRepository>();
-
-builder.Services.AddScoped<IAssetsService, AssetsService>();
-
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>(); //
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
 
-// 2. Service Registration (ADD THIS LINE 👇)
-builder.Services.AddScoped<IAssetsService, AssetsService>();if (app.Environment.IsDevelopment()) 
+var app = builder.Build(); 
+
+if (app.Environment.IsDevelopment()) 
 {
     app.UseSwagger();
     app.UseSwaggerUI();

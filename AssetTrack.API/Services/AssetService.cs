@@ -1,14 +1,14 @@
 ﻿using AssetTrack.API.Controllers;
 using AssetTrack.API.Models;
-using AssetTrack.API.Repositories;
+using AssetTrack.API.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetTrack.API.Services;
 
-public class AssetsService(IAssetsRepository repository, ILogger<AssetsController> logger) : IAssetsService
+public class AssetService(IAssetRepository repository, ILogger<EmployeeController> logger) : IAssetService
 {
-    private readonly IAssetsRepository _repository = repository;
+    private readonly IAssetRepository _repository = repository;
     private readonly ILogger _logger = logger;
     
     public async Task<List<Asset>> GetAllAsync()

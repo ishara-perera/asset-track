@@ -2,7 +2,7 @@
 
 namespace AssetTrack.API.Services;
 
-public interface IAssetsService
+public interface IAssetService
 {
     Task<List<Asset>> GetAllAsync();
 

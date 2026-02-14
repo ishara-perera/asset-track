@@ -15,4 +15,7 @@ public class Asset
    
    [Column(TypeName = "decimal(18,2)")]
    public decimal PurchasePrice { get; set; }
+   
+   public int EmployeeId { get; set; }
+   public Employee? Employee { get; set; }
 }
