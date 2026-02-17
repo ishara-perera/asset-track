@@ -1,4 +1,5 @@
 ﻿using AssetTrack.API.Models;
+using AssetTrack.API.Wrapper;
 
 namespace AssetTrack.API.Repository 
 {
@@ -12,6 +13,6 @@ namespace AssetTrack.API.Repository
 
         Task<Asset?> UpdateAssetAsync(int id, Asset asset);
 
-        Task DeleteAssetAsync(int id);
+        Task<Asset?> DeleteAssetAsync(int id);
     }
 }

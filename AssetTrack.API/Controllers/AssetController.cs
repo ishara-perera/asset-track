@@ -1,4 +1,5 @@
-﻿using AssetTrack.API.Models;
+﻿using System.Net;
+using AssetTrack.API.Models;
 using AssetTrack.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,51 +9,83 @@ namespace AssetTrack.API.Controllers;
 [Route("api/[controller]")]
 public class AssetController(IAssetService assetService, ILogger<EmployeeController> logger) : ControllerBase
 {
-    private readonly IAssetService _assetService = assetService;
-    private readonly ILogger<EmployeeController> _logger = logger;
-    
     [HttpGet]
     public async Task<ActionResult<List<Asset>>> GetAll()
     {
-        var assets = await _assetService.GetAllAsync();
-        return Ok(assets);
+        logger.LogInformation("Call the API service for get all asset information");
+        var assetResponse = await assetService.GetAllAsync();
+        if (!assetResponse.IsSuccess)
+        {
+            if (assetResponse.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(assetResponse);
+            if (assetResponse.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(assetResponse);
+
+
+            return StatusCode((int)assetResponse.StatusCode, assetResponse);
+        }
+
+        return Ok(assetResponse);
     }
+    
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Asset>> GetAssetById(int id)
     {
-        var asset = await _assetService.GetAssetByIdAsync(id);
-        if (asset == null)
-            return NotFound();
+        var assetResponse = await assetService.GetAssetByIdAsync(id);
+        if (!assetResponse.IsSuccess)
+        {
+            if (assetResponse.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(assetResponse);
+            if (assetResponse.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(assetResponse);
 
-        return Ok(asset);    }
+            return StatusCode((int)assetResponse.StatusCode, assetResponse);
+        }
+
+        return Ok(assetResponse);
+
+    }
 
     [HttpPost]
     public async Task<ActionResult<Asset>> CreateAsset(Asset asset)
     {
-        _logger.LogInformation("Calling create asset API service...");
-        var newAsset = await _assetService.CreateAsync(asset);
-        return CreatedAtAction(nameof(GetAssetById), new { newAsset.Id }, newAsset);
+        var assetResponse = await assetService.CreateAsync(asset);
+        if (!assetResponse.IsSuccess)
+        {
+            if (assetResponse.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(assetResponse);
+            if (assetResponse.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(assetResponse);
+
+            return StatusCode((int)assetResponse.StatusCode, assetResponse);
+        }
+
+        return Ok(assetResponse);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<Asset>> UpdateAsset(int id, Asset asset)
     {
-        if (id != asset.Id)
-            return BadRequest();
+        var assetResponse = await assetService.UpdateAssetAsync(id, asset);
+        if (!assetResponse.IsSuccess)
+        {
+            if (assetResponse.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(assetResponse);
+            if (assetResponse.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(assetResponse);
 
-        var updatedAsset = await _assetService.UpdateAssetAsync(id, asset);
+            return StatusCode((int)assetResponse.StatusCode, assetResponse);
+        }
 
-        if (updatedAsset == null)
-            return NotFound();
-        
         return NoContent();
     }
+    
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsset(int id)
     {
-        await _assetService.DeleteAssetAsync(id);
+        await assetService.DeleteAssetAsync(id);
         return NoContent();
     }
 }

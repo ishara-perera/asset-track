@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace AssetTrack.API.Models;
 
@@ -17,5 +18,7 @@ public class Asset
    public decimal PurchasePrice { get; set; }
    
    public int EmployeeId { get; set; }
+   
+   [JsonIgnore]
    public Employee? Employee { get; set; }
 }

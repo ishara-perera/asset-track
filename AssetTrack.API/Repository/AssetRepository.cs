@@ -28,30 +28,29 @@ public class AssetRepository(AppDbContext context) : IAssetRepository
 
     public async Task<Asset?> UpdateAssetAsync(int id, Asset asset)
     {
-        _context.Entry(asset).State = EntityState.Modified;
+        // 1. Fetch the existing entity (EF tracks this)
+        var existingAsset = await _context.Assets.FindAsync(id);
 
-        try
+        if (existingAsset == null)
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await _context.Assets.AnyAsync(e => e.Id == id))
-            {
-                return null; 
-            }
-            else
-            {
-                throw; 
-            }
+            return null; // Not found
         }
 
-        return asset;
-    }    
-    public async Task DeleteAssetAsync(int id)
+        // 2. Copy values from the input 'asset' to the 'existingAsset'
+        // This updates the tracked entity safely.
+        _context.Entry(existingAsset).CurrentValues.SetValues(asset);
+
+        // 3. Save changes
+        await _context.SaveChangesAsync();
+
+        return existingAsset;
+    }  
+    public async Task<Asset?> DeleteAssetAsync(int id)
     {
         var asset = await _context.Assets.FindAsync(id);
-        if (asset != null) _context.Assets.Remove(asset);
+        if (asset == null) return null;
+        _context.Assets.Remove(asset);
         await _context.SaveChangesAsync();
+        return asset;
     }
 }

@@ -1,16 +1,17 @@
 ﻿using AssetTrack.API.Models;
+using AssetTrack.API.Wrapper;
 
 namespace AssetTrack.API.Services;
 
 public interface IAssetService
 {
-    Task<List<Asset>> GetAllAsync();
+    Task<ResponseInfo<List<Asset>>> GetAllAsync();
 
-    Task<Asset?> GetAssetByIdAsync(int id);
+    Task<ResponseInfo<Asset>> GetAssetByIdAsync(int id);
 
-    Task<Asset> CreateAsync(Asset asset);
+    Task<ResponseInfo<Asset>> CreateAsync(Asset asset);
 
-    Task<Asset?> UpdateAssetAsync(int id, Asset asset);
+    Task<ResponseInfo<bool>> UpdateAssetAsync(int id, Asset asset);
 
-    Task DeleteAssetAsync(int id);
+    Task<ResponseInfo<bool>>  DeleteAssetAsync(int id);
 }
