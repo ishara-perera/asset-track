@@ -16,7 +16,6 @@ public class AssetRepository(AppDbContext context) : IAssetRepository
     public async Task<Asset?> GetAssetByIdAsync(int id)
     {
         return await _context.Assets.FindAsync(id);
-        
     }
 
     public async Task<Asset> CreateAsync(Asset asset)
@@ -26,28 +25,18 @@ public class AssetRepository(AppDbContext context) : IAssetRepository
         return asset;
     }
 
-    public async Task<Asset?> UpdateAssetAsync(int id, Asset asset)
+    public async Task<bool> UpdateAssetAsync(Asset asset)
     {
-        var existingAsset = await _context.Assets.FindAsync(id);
-        
-        if (existingAsset == null)
-        {
-            return null;
-        }
-
-        
-        _context.Entry(existingAsset).CurrentValues.SetValues(asset);
-
+        _context.Assets.Update(asset);
         await _context.SaveChangesAsync();
-
-        return existingAsset;
+        return true;
     }  
-    public async Task<Asset?> DeleteAssetAsync(int id)
+    public async Task<bool> DeleteAssetAsync(int id)
     {
         var asset = await _context.Assets.FindAsync(id);
-        if (asset == null) return null;
+        if (asset == null) return false;
         _context.Assets.Remove(asset);
         await _context.SaveChangesAsync();
-        return asset;
+        return true;
     }
 }

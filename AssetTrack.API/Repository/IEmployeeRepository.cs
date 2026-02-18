@@ -10,8 +10,8 @@ namespace AssetTrack.API.Repository
 
         Task<Employee> CreateEmployeeAsync(Employee employee);
 
-        Task<Employee?> UpdateEmployeeAsync(int id, Employee employee);
+        Task<bool> UpdateEmployeeAsync(Employee employee);
 
-        Task<Employee?> DeleteEmployeeAsync(int id);
+        Task<bool> DeleteEmployeeAsync(int id);
     }
 }

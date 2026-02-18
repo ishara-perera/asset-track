@@ -9,7 +9,7 @@ public class ResponseInfo<T>
     public T? Data { get; set; }
     public HttpStatusCode StatusCode { get; set; }
 
-    public static ResponseInfo<T> Success(T data, HttpStatusCode httpStatusCode, string message = "")
+    public static ResponseInfo<T> Success(T data, HttpStatusCode httpStatusCode, string message)
     {
         if (string.IsNullOrWhiteSpace(message))
         {

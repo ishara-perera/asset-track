@@ -1,4 +1,5 @@
-﻿using AssetTrack.API.Models;
+﻿using System.Net;
+using AssetTrack.API.Models;
 using AssetTrack.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,52 +9,74 @@ namespace AssetTrack.API.Controllers;
 [Route("api/[controller]")]
 public class EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger) : ControllerBase
 {
-    private readonly IEmployeeService _employeeService = employeeService;
-    private readonly ILogger<EmployeeController> _logger = logger;
-    
     [HttpGet]
     public async Task<ActionResult<List<Employee>>> GetAll()
     {
-        var assets = await _employeeService.GetAllEmployeeAsync();
-        return Ok(assets);
+        logger.LogInformation("Call the API service for get all employee information");
+        var employeeResponse = await employeeService.GetAllEmployeeAsync();
+        if (employeeResponse.IsSuccess) return Ok(employeeResponse);
+        if (employeeResponse.StatusCode == HttpStatusCode.NotFound)
+            return NotFound(employeeResponse);
+        return employeeResponse.StatusCode == HttpStatusCode.BadRequest ? BadRequest(employeeResponse) : StatusCode((int)employeeResponse.StatusCode, employeeResponse);
+
     }
+    
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Employee>> GetEmployeeById(int id)
     {
-        var asset = await _employeeService.GetEmployeeByIdAsync(id);
-        if (asset == null)
-            return NotFound();
+        var employeeResponse = await employeeService.GetEmployeeByIdAsync(id);
+        if (!employeeResponse.IsSuccess)
+        {
+            return employeeResponse.StatusCode switch
+            {
+                HttpStatusCode.NotFound => NotFound(employeeResponse),
+                HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+                _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+            };
+        }
 
-        return CreatedAtAction(nameof(GetEmployeeById), new { id = asset.Id }, asset);
+        return Ok(employeeResponse);
+
     }
 
     [HttpPost]
-    public async Task<ActionResult<Employee>> CreateAsset(Employee employee)
+    public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
     {
-        _logger.LogInformation("Calling create asset API service...");
-        var newAsset = await _employeeService.CreateEmployeeAsync(employee);
-        return CreatedAtAction(nameof(GetEmployeeById), new { newAsset.Id }, newAsset);
+        var employeeResponse = await employeeService.CreateEmployeeAsync(employee);
+        if (employeeResponse.IsSuccess) return Ok(employeeResponse);
+        return employeeResponse.StatusCode switch
+        {
+            HttpStatusCode.NotFound => NotFound(employeeResponse),
+            HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+            _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+        };
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Employee>> UpdateAsset(int id, Employee employee)
+    public async Task<ActionResult<Employee>> UpdateEmployee(Employee employee)
     {
-        if (id != employee.Id)
-            return BadRequest();
-
-        var updatedEmployee = await _employeeService.UpdateEmployeeAsync(id, employee);
-
-        if (updatedEmployee == null)
-            return NotFound();
-        
-        return NoContent();
+        var employeeResponse = await employeeService.UpdateEmployeeAsync(employee);
+        if (employeeResponse.IsSuccess) return NoContent();
+        return employeeResponse.StatusCode switch
+        {
+            HttpStatusCode.NotFound => NotFound(employeeResponse),
+            HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+            _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+        };
     }
+    
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEmployee(int id)
     {
-        await _employeeService.DeleteEmployeeAsync(id);
-        return NoContent();
+        var employeeResponse = await employeeService.DeleteEmployeeAsync(id);
+        if (employeeResponse.IsSuccess) return NoContent();
+        return employeeResponse.StatusCode switch
+        {
+            HttpStatusCode.NotFound => NotFound(employeeResponse),
+            HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+            _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+        };
     }
 }

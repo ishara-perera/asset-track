@@ -8,10 +8,10 @@ namespace AssetTrack.API.Services;
 
 public class EmployeeService(IEmployeeRepository repository, ILogger<EmployeeController> logger) : IEmployeeService
 {
-    public async Task<ResponseInfo<List<Employee?>>> GetAllEmployeeAsync()
+    public async Task<ResponseInfo<List<Employee>>> GetAllEmployeeAsync()
     {
         var employees = await repository.GetEmployeeAllAsync();
-        return ResponseInfo<List<Employee?>>.Success(employees, HttpStatusCode.OK, "Return employee data");
+        return ResponseInfo<List<Employee>>.Success(employees, HttpStatusCode.OK, "Return employee data");
     }
 
     public async Task<ResponseInfo<Employee?>> GetEmployeeByIdAsync(int id)
@@ -27,32 +27,38 @@ public class EmployeeService(IEmployeeRepository repository, ILogger<EmployeeCon
         try
         {
             var newEmployee = await repository.CreateEmployeeAsync(employee);
-            return ResponseInfo<Employee>.Success(newEmployee , HttpStatusCode.Created,"Employee created successfully.");
+            return ResponseInfo<Employee>.Success(newEmployee, HttpStatusCode.Created,
+                "Employee created successfully.");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occured while processing the employee creation. Exception {Message}", ex.Message);
-            return ResponseInfo<Employee>.Failure($"An error occured while processing the employee creation. {ex.Message}",
+            logger.LogError(ex, "An error occured while processing the employee creation. Exception {Message}",
+                ex.Message);
+            return ResponseInfo<Employee>.Failure(
+                $"An error occured while processing the employee creation. {ex.Message}",
                 HttpStatusCode.BadRequest);
-        }
-        
-    }
-        
-    public async Task<ResponseInfo<bool>> UpdateEmployeeAsync(int id, Employee employee)
-    {
-        try
-        {
-            var updatedEmployee = repository.UpdateEmployeeAsync(id, employee);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
         }
     }
 
-    public async Task DeleteEmployeeAsync(int id)
+    public async Task<ResponseInfo<bool>> UpdateEmployeeAsync(Employee employee)
     {
-        await repository.DeleteEmployeeAsync(id);
+        try
+        {
+            var existingEmployee = await repository.GetEmployeeByIdAsync(employee.Id);
+            if (existingEmployee == null)
+                ResponseInfo<bool>.Failure("Employee not found", HttpStatusCode.NotFound);
+            return ResponseInfo<bool>.Success(true, HttpStatusCode.OK, "Employee updated successfully!");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while updating the employee. Exception {Message}",  ex.Message);
+            return ResponseInfo<bool>.Failure("Employee not updated", HttpStatusCode.NotModified);
+        }
+    }
+
+    public async Task<ResponseInfo<bool>> DeleteEmployeeAsync(int id)
+    {
+        var response = await repository.DeleteEmployeeAsync(id);
+        return !response ? ResponseInfo<bool>.Failure("Employee not found", HttpStatusCode.NotFound) : ResponseInfo<bool>.Success(true, HttpStatusCode.OK, "Employee deleted successfully!");
     }
 }

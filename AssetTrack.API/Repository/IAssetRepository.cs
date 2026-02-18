@@ -11,8 +11,8 @@ namespace AssetTrack.API.Repository
 
         Task<Asset> CreateAsync(Asset asset);
 
-        Task<Asset?> UpdateAssetAsync(int id, Asset asset);
+        Task<bool> UpdateAssetAsync(Asset asset);
 
-        Task<Asset?> DeleteAssetAsync(int id);
+        Task<bool> DeleteAssetAsync(int id);
     }
 }

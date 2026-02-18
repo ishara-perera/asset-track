@@ -7,7 +7,6 @@ namespace AssetTrack.API.Services;
 
 public class AssetService(IAssetRepository repository, ILogger<AssetService> logger) : IAssetService
 {
-    private readonly ILogger _logger = logger;
 
     public async Task<ResponseInfo<List<Asset>>> GetAllAsync()
     {
@@ -15,12 +14,12 @@ public class AssetService(IAssetRepository repository, ILogger<AssetService> log
         return ResponseInfo<List<Asset>>.Success(assets, HttpStatusCode.OK, "Return asset data");
     }
 
-    public async Task<ResponseInfo<Asset>> GetAssetByIdAsync(int id)
+    public async Task<ResponseInfo<Asset?>> GetAssetByIdAsync(int id)
     {
         var asset = await repository.GetAssetByIdAsync(id);
         return asset != null
-            ? ResponseInfo<Asset>.Success(asset, HttpStatusCode.OK, "Return asset data")
-            : ResponseInfo<Asset>.Failure("No asset information found", HttpStatusCode.NotFound);
+            ? ResponseInfo<Asset?>.Success(asset, HttpStatusCode.OK, "Return asset data")
+            : ResponseInfo<Asset?>.Failure("No asset information found", HttpStatusCode.NotFound);
     }
 
     public async Task<ResponseInfo<Asset>> CreateAsync(Asset asset)
@@ -32,27 +31,25 @@ public class AssetService(IAssetRepository repository, ILogger<AssetService> log
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occured while processing the asset creation. Exception {Message}", ex.Message);
+            logger.LogError(ex, "An error occured while processing the asset creation. Exception {Message}", ex.Message);
             return ResponseInfo<Asset>.Failure($"An error occured while processing the asset creation. {ex.Message}",
                 HttpStatusCode.BadRequest);
         }
     }
         
-    public async Task<ResponseInfo<bool>> UpdateAssetAsync(int id, Asset asset)
+    public async Task<ResponseInfo<bool>> UpdateAssetAsync(Asset asset)
     {
-        asset.Id = id;
-        
         try
         { 
-            var existingAsset = await repository.GetAssetByIdAsync(id);
+            var existingAsset = await repository.GetAssetByIdAsync(asset.Id);
             if (existingAsset == null)
                 return ResponseInfo<bool>.Failure("asset not found", HttpStatusCode.BadRequest);
-            await repository.UpdateAssetAsync(id, asset);
-            return ResponseInfo<bool>.Success(true, HttpStatusCode.OK, "asset updated");
+            var response = await repository.UpdateAssetAsync(asset);
+            return !response ? ResponseInfo<bool>.Failure("Could not update asset", HttpStatusCode.NotModified) : ResponseInfo<bool>.Success(true, HttpStatusCode.OK, "asset updated");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occured while processing the asset update. Exception {Message}", ex.Message);
+            logger.LogError(ex, "An error occured while processing the asset update. Exception {Message}", ex.Message);
             return ResponseInfo<bool>.Failure($"An error occured while updating the asset. {ex.Message}",
                 HttpStatusCode.BadRequest);
         }
@@ -62,15 +59,15 @@ public class AssetService(IAssetRepository repository, ILogger<AssetService> log
     {
         try
         {
-            var deletedAsset = await repository.DeleteAssetAsync(id);
-            if (deletedAsset == null)
+            var response = await repository.DeleteAssetAsync(id);
+            if (!response)
                 return ResponseInfo<bool>.Failure("Asset not found", HttpStatusCode.BadRequest);
             return ResponseInfo<bool>.Success(true, HttpStatusCode.OK, "asset updated");
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occured while processing the asset update. Exception {Message}", ex.Message);
+            logger.LogError(ex, "An error occured while processing the asset update. Exception {Message}", ex.Message);
             return ResponseInfo<bool>.Failure($"An error occured while updating the asset. {ex.Message}",
                 HttpStatusCode.BadRequest); 
         }
