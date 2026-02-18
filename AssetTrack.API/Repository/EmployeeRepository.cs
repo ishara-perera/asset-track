@@ -6,54 +6,42 @@ namespace AssetTrack.API.Repository;
 
 public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 {
-    private readonly AppDbContext _context = context;
-    
     public async Task<List<Employee>> GetEmployeeAllAsync()
     {
-        return await _context.Employees.ToListAsync();
+        
+        return await context.Employees.ToListAsync();
 
     }
 
     public async Task<Employee?> GetEmployeeByIdAsync(int id)
     {
-        return await _context.Employees.FindAsync(id);  
+        return await context.Employees.FindAsync(id);
+        
     }
 
     public async Task<Employee> CreateEmployeeAsync(Employee employee)
     {
-        _context.Employees.Add(employee);
-        await _context.SaveChangesAsync();
+        context.Employees.Add(employee);
+        await context.SaveChangesAsync();
         return employee;
         
     }
 
     public async Task<Employee?> UpdateEmployeeAsync(int id, Employee employee)
     {
-        _context.Entry(employee).State = EntityState.Modified;
-        
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await _context.Employees.AnyAsync(e => e.Id == id))
-            {
-                return null; 
-            }
-            else
-            {
-                throw; 
-            }
-        }
-
+        var existingEmployee = await context.Employees.FindAsync(id);
+        if (existingEmployee == null) return null;
+        context.Entry(employee).State = EntityState.Modified;
+        await context.SaveChangesAsync();
         return employee;
     }
 
-    public async Task DeleteEmployeeAsync(int id)
+    public async Task<Employee?> DeleteEmployeeAsync(int id)
     {
-        var employee = await _context.Employees.FindAsync(id);
-        if (employee != null)  _context.Employees.Remove(employee);
-        await _context.SaveChangesAsync();
+        var employee = await context.Employees.FindAsync(id);
+        if (employee == null) return null;
+        context.Employees.Remove(employee);
+        await context.SaveChangesAsync();
+        return employee;
     }
 }

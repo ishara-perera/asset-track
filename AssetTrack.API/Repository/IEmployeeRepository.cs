@@ -4,7 +4,7 @@ namespace AssetTrack.API.Repository
 {
     public interface IEmployeeRepository
     {
-        Task<List<Employee>> GetEmployeeAllAsync();
+        Task<List<Employee>> GetEmployeeAllAsync();   
 
         Task<Employee?> GetEmployeeByIdAsync(int id);
 
@@ -12,6 +12,6 @@ namespace AssetTrack.API.Repository
 
         Task<Employee?> UpdateEmployeeAsync(int id, Employee employee);
 
-        Task DeleteEmployeeAsync(int id);
+        Task<Employee?> DeleteEmployeeAsync(int id);
     }
 }

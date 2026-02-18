@@ -1,16 +1,17 @@
 ﻿using AssetTrack.API.Models;
+using AssetTrack.API.Wrapper;
 
 namespace AssetTrack.API.Services;
 
 public interface IEmployeeService
 {
-    Task<List<Employee>> GetAllEmployeeAsync();
+    Task<ResponseInfo<List<Employee?>>> GetAllEmployeeAsync();
 
-    Task<Employee?> GetEmployeeByIdAsync(int id);
+    Task<ResponseInfo<Employee?>> GetEmployeeByIdAsync(int id);
 
-    Task<Employee> CreateEmployeeAsync(Employee employee);
+    Task<ResponseInfo<Employee>> CreateEmployeeAsync(Employee employee);
 
-    Task<Employee?> UpdateEmployeeAsync(int id, Employee employee);
+    Task<ResponseInfo<bool>> UpdateEmployeeAsync(int id, Employee employee);
 
-    Task DeleteEmployeeAsync(int id);
+    Task<ResponseInfo<bool>> DeleteEmployeeAsync(int id);
 }

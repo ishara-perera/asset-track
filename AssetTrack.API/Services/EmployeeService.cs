@@ -1,36 +1,58 @@
-﻿using AssetTrack.API.Controllers;
+﻿using System.Net;
+using AssetTrack.API.Controllers;
 using AssetTrack.API.Models;
 using AssetTrack.API.Repository;
+using AssetTrack.API.Wrapper;
 
 namespace AssetTrack.API.Services;
 
 public class EmployeeService(IEmployeeRepository repository, ILogger<EmployeeController> logger) : IEmployeeService
 {
-    private readonly IEmployeeRepository _repository = repository;
-    private readonly ILogger _logger = logger;
-    
-    public async Task<List<Employee>> GetAllEmployeeAsync()
+    public async Task<ResponseInfo<List<Employee?>>> GetAllEmployeeAsync()
     {
-        return await _repository.GetEmployeeAllAsync();
+        var employees = await repository.GetEmployeeAllAsync();
+        return ResponseInfo<List<Employee?>>.Success(employees, HttpStatusCode.OK, "Return employee data");
     }
 
-    public async Task<Employee?> GetEmployeeByIdAsync(int id)
+    public async Task<ResponseInfo<Employee?>> GetEmployeeByIdAsync(int id)
     {
-        return await _repository.GetEmployeeByIdAsync(id);
+        var employee = await repository.GetEmployeeByIdAsync(id);
+        return employee != null
+            ? ResponseInfo<Employee?>.Success(employee, HttpStatusCode.OK, "Return employee data")
+            : ResponseInfo<Employee?>.Failure("No employee information found", HttpStatusCode.NotFound);
     }
 
-    public async Task<Employee> CreateEmployeeAsync(Employee employee)
+    public async Task<ResponseInfo<Employee>> CreateEmployeeAsync(Employee employee)
     {
-        return await _repository.CreateEmployeeAsync(employee);
+        try
+        {
+            var newEmployee = await repository.CreateEmployeeAsync(employee);
+            return ResponseInfo<Employee>.Success(newEmployee , HttpStatusCode.Created,"Employee created successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while processing the employee creation. Exception {Message}", ex.Message);
+            return ResponseInfo<Employee>.Failure($"An error occured while processing the employee creation. {ex.Message}",
+                HttpStatusCode.BadRequest);
+        }
+        
     }
         
-    public async Task<Employee?> UpdateEmployeeAsync(int id, Employee employee)
+    public async Task<ResponseInfo<bool>> UpdateEmployeeAsync(int id, Employee employee)
     {
-        return await _repository.UpdateEmployeeAsync(id, employee);
+        try
+        {
+            var updatedEmployee = repository.UpdateEmployeeAsync(id, employee);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task DeleteEmployeeAsync(int id)
     {
-        await _repository.DeleteEmployeeAsync(id);
+        await repository.DeleteEmployeeAsync(id);
     }
 }

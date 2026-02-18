@@ -28,19 +28,16 @@ public class AssetRepository(AppDbContext context) : IAssetRepository
 
     public async Task<Asset?> UpdateAssetAsync(int id, Asset asset)
     {
-        // 1. Fetch the existing entity (EF tracks this)
         var existingAsset = await _context.Assets.FindAsync(id);
-
+        
         if (existingAsset == null)
         {
-            return null; // Not found
+            return null;
         }
 
-        // 2. Copy values from the input 'asset' to the 'existingAsset'
-        // This updates the tracked entity safely.
+        
         _context.Entry(existingAsset).CurrentValues.SetValues(asset);
 
-        // 3. Save changes
         await _context.SaveChangesAsync();
 
         return existingAsset;
