@@ -1,7 +1,8 @@
 using AssetTrack.API.Data;
 using AssetTrack.API.Repository;
-using AssetTrack.API.Services; 
+using AssetTrack.API.Services;
 using Microsoft.EntityFrameworkCore;
+
 // Hosting & Configuration - This file using the Generic Host pattern
 /*
  * 1. Sets up the Kestral (Internal web server)
@@ -10,12 +11,15 @@ using Microsoft.EntityFrameworkCore;
  */
 var builder = WebApplication.CreateBuilder(args); // Do the heavy lifting
 
-var serverVersion = new MariaDbServerVersion(new Version(10, 4, 32));
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 45));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        serverVersion
-    ));
+        serverVersion,
+        mySqlOptions => mySqlOptions.EnableRetryOnFailure()
+    )
+);
 
 builder.Services.AddControllers();
 
@@ -25,14 +29,16 @@ builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var app = builder.Build();
 
-var app = builder.Build(); 
-
-// Loading Environment 
-if (app.Environment.IsDevelopment()) 
+// Loading Environment
+if (app.Environment.IsDevelopment())
 {
     // Automatic Migration for Development
     using var scope = app.Services.CreateScope();
@@ -48,7 +54,7 @@ if (app.Environment.IsDevelopment())
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while migrating the database.");
     }
-    
+
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -56,12 +62,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-}
-
-
+// using (var scope = app.Services.CreateScope())
+// {
+//     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//     db.Database.Migrate();
+// }
 
 app.Run();
