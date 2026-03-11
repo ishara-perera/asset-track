@@ -22,18 +22,18 @@ public class AssetController(IAssetService assetService, ILogger<EmployeeControl
     }
     
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Asset>> GetAssetById(int id)
-    {
-        var assetResponse = await assetService.GetAssetByIdAsync(id);
-        if (assetResponse.IsSuccess) return Ok(assetResponse);
-        return assetResponse.StatusCode switch
-        {
-            HttpStatusCode.NotFound => NotFound(assetResponse),
-            HttpStatusCode.BadRequest => BadRequest(assetResponse),
-            _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
-        };
-    }
+    // [HttpGet("{id}")]
+    // public async Task<ActionResult<Asset>> GetAssetById(int id)
+    // {
+    //     var assetResponse = await assetService.GetAssetByIdAsync(id);
+    //     if (assetResponse.IsSuccess) return Ok(assetResponse);
+    //     return assetResponse.StatusCode switch
+    //     {
+    //         HttpStatusCode.NotFound => NotFound(assetResponse),
+    //         HttpStatusCode.BadRequest => BadRequest(assetResponse),
+    //         _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
+    //     };
+    // }
 
     [HttpPost]
     public async Task<ActionResult<Asset>> CreateAsset(Asset asset)
@@ -48,30 +48,30 @@ public class AssetController(IAssetService assetService, ILogger<EmployeeControl
         };
     }
 
-    [HttpPut]
-    public async Task<ActionResult<Asset>> UpdateAsset(Asset asset)
-    {
-        var assetResponse = await assetService.UpdateAssetAsync(asset);
-        if (assetResponse.IsSuccess) return NoContent();
-        return assetResponse.StatusCode switch
-        {
-            HttpStatusCode.NotFound => NotFound(assetResponse),
-            HttpStatusCode.BadRequest => BadRequest(assetResponse),
-            _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
-        };
-    }
+    // [HttpPut]
+    // public async Task<ActionResult<Asset>> UpdateAsset(Asset asset)
+    // {
+    //     var assetResponse = await assetService.UpdateAssetAsync(asset);
+    //     if (assetResponse.IsSuccess) return NoContent();
+    //     return assetResponse.StatusCode switch
+    //     {
+    //         HttpStatusCode.NotFound => NotFound(assetResponse),
+    //         HttpStatusCode.BadRequest => BadRequest(assetResponse),
+    //         _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
+    //     };
+    // }
     
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsset(int id)
-    {
-        var assetResponse = await assetService.DeleteAssetAsync(id);
-        if (assetResponse.IsSuccess) return NoContent();
-        return assetResponse.StatusCode switch
-        {
-            HttpStatusCode.NotFound => NotFound(assetResponse),
-            HttpStatusCode.BadRequest => BadRequest(assetResponse),
-            _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
-        };
-    }
+    // [HttpDelete("{id}")]
+    // public async Task<IActionResult> DeleteAsset(int id)
+    // {
+    //     var assetResponse = await assetService.DeleteAssetAsync(id);
+    //     if (assetResponse.IsSuccess) return NoContent();
+    //     return assetResponse.StatusCode switch
+    //     {
+    //         HttpStatusCode.NotFound => NotFound(assetResponse),
+    //         HttpStatusCode.BadRequest => BadRequest(assetResponse),
+    //         _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
+    //     };
+    // }
 }

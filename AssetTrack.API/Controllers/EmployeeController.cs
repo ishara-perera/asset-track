@@ -22,23 +22,23 @@ public class EmployeeController(IEmployeeService employeeService, ILogger<Employ
     }
     
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Employee>> GetEmployeeById(int id)
-    {
-        var employeeResponse = await employeeService.GetEmployeeByIdAsync(id);
-        if (!employeeResponse.IsSuccess)
-        {
-            return employeeResponse.StatusCode switch
-            {
-                HttpStatusCode.NotFound => NotFound(employeeResponse),
-                HttpStatusCode.BadRequest => BadRequest(employeeResponse),
-                _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
-            };
-        }
-
-        return Ok(employeeResponse);
-
-    }
+    // [HttpGet("{id}")]
+    // public async Task<ActionResult<Employee>> GetEmployeeById(int id)
+    // {
+    //     var employeeResponse = await employeeService.GetEmployeeByIdAsync(id);
+    //     if (!employeeResponse.IsSuccess)
+    //     {
+    //         return employeeResponse.StatusCode switch
+    //         {
+    //             HttpStatusCode.NotFound => NotFound(employeeResponse),
+    //             HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+    //             _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+    //         };
+    //     }
+    //
+    //     return Ok(employeeResponse);
+    //
+    // }
 
     [HttpPost]
     public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
@@ -53,30 +53,30 @@ public class EmployeeController(IEmployeeService employeeService, ILogger<Employ
         };
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Employee>> UpdateEmployee(Employee employee)
-    {
-        var employeeResponse = await employeeService.UpdateEmployeeAsync(employee);
-        if (employeeResponse.IsSuccess) return NoContent();
-        return employeeResponse.StatusCode switch
-        {
-            HttpStatusCode.NotFound => NotFound(employeeResponse),
-            HttpStatusCode.BadRequest => BadRequest(employeeResponse),
-            _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
-        };
-    }
+    // [HttpPut]
+    // public async Task<ActionResult<Employee>> UpdateEmployee(Employee employee)
+    // {
+    //     var employeeResponse = await employeeService.UpdateEmployeeAsync(employee);
+    //     if (employeeResponse.IsSuccess) return NoContent();
+    //     return employeeResponse.StatusCode switch
+    //     {
+    //         HttpStatusCode.NotFound => NotFound(employeeResponse),
+    //         HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+    //         _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+    //     };
+    // }
     
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEmployee(int id)
-    {
-        var employeeResponse = await employeeService.DeleteEmployeeAsync(id);
-        if (employeeResponse.IsSuccess) return NoContent();
-        return employeeResponse.StatusCode switch
-        {
-            HttpStatusCode.NotFound => NotFound(employeeResponse),
-            HttpStatusCode.BadRequest => BadRequest(employeeResponse),
-            _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
-        };
-    }
+    // [HttpDelete("{id}")]
+    // public async Task<IActionResult> DeleteEmployee(int id)
+    // {
+    //     var employeeResponse = await employeeService.DeleteEmployeeAsync(id);
+    //     if (employeeResponse.IsSuccess) return NoContent();
+    //     return employeeResponse.StatusCode switch
+    //     {
+    //         HttpStatusCode.NotFound => NotFound(employeeResponse),
+    //         HttpStatusCode.BadRequest => BadRequest(employeeResponse),
+    //         _ => StatusCode((int)employeeResponse.StatusCode, employeeResponse)
+    //     };
+    // }
 }
