@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using AssetTrack.API.DTOs;
 using AssetTrack.API.Models;
 using AssetTrack.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,7 @@ public class EmployeeController(IEmployeeService employeeService, ILogger<Employ
     // }
 
     [HttpPost]
-    public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
+    public async Task<ActionResult<Employee>> CreateEmployee(EmployeeDto employee)
     {
         var employeeResponse = await employeeService.CreateEmployeeAsync(employee);
         if (employeeResponse.IsSuccess) return Ok(employeeResponse);

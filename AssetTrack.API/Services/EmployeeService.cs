@@ -1,17 +1,20 @@
 ﻿using System.Net;
 using AssetTrack.API.Controllers;
+using AssetTrack.API.DTOs;
 using AssetTrack.API.Models;
 using AssetTrack.API.Repository;
 using AssetTrack.API.Wrapper;
+using AutoMapper;
 
 namespace AssetTrack.API.Services;
 
-public class EmployeeService(IRepository<Employee> repository, ILogger<EmployeeController> logger) : IEmployeeService
+public class EmployeeService(IRepository<Employee> repository, IMapper mapper,ILogger<EmployeeController> logger) : IEmployeeService
 {
-    public async Task<ResponseInfo<IEnumerable<Employee>>> GetAllEmployeeAsync()
+    public async Task<ResponseInfo<IEnumerable<EmployeeDto>>> GetAllEmployeeAsync()
     {
-        var employees = await repository.GetAllAsync();
-        return ResponseInfo<IEnumerable<Employee>>.Success(employees, HttpStatusCode.OK, "Return employee data");
+        var result = await repository.GetAllAsync();
+        var employeeDto = mapper.Map<List<EmployeeDto>>(result);
+        return ResponseInfo<IEnumerable<EmployeeDto>>.Success(employeeDto, HttpStatusCode.OK, "Return employee data");
     }
 
     // public async Task<ResponseInfo<Employee?>> GetEmployeeByIdAsync(int id)
@@ -22,12 +25,14 @@ public class EmployeeService(IRepository<Employee> repository, ILogger<EmployeeC
     //         : ResponseInfo<Employee?>.Failure("No employee information found", HttpStatusCode.NotFound);
     // }
 
-    public async Task<ResponseInfo<Employee>> CreateEmployeeAsync(Employee employee)
+    public async Task<ResponseInfo<Employee>> CreateEmployeeAsync(EmployeeDto employeeDto)
     {
         try
         {
-            var newEmployee = await repository.AddEntity(employee);
-            return ResponseInfo<Employee>.Success(newEmployee, HttpStatusCode.Created,
+            var employee = mapper.Map<Employee>(employeeDto);
+            var response = await repository.AddEntity(employee);
+            var newEmployeeDto = mapper.Map<Employee>(response);
+            return ResponseInfo<Employee>.Success(newEmployeeDto, HttpStatusCode.Created,
                 "Employee created successfully.");
         }
         catch (Exception ex)

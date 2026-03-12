@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using AssetTrack.API.DTOs;
 using AssetTrack.API.Models;
 using AssetTrack.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -36,9 +37,9 @@ public class AssetController(IAssetService assetService, ILogger<EmployeeControl
     // }
 
     [HttpPost]
-    public async Task<ActionResult<Asset>> CreateAsset(Asset asset)
+    public async Task<ActionResult<Asset>> CreateAsset(AssetDto assetDto)
     {
-        var assetResponse = await assetService.CreateAsync(asset);
+        var assetResponse = await assetService.CreateAsync(assetDto);
         if (assetResponse.IsSuccess) return Ok(assetResponse);
         return assetResponse.StatusCode switch
         {

@@ -1,17 +1,20 @@
-﻿using System.Net;
+﻿using AutoMapper;
+using System.Net;
+using AssetTrack.API.DTOs;
 using AssetTrack.API.Models;
 using AssetTrack.API.Repository;
 using AssetTrack.API.Wrapper;
 
 namespace AssetTrack.API.Services;
 
-public class AssetService(IRepository<Asset> repository, ILogger<AssetService> logger) : IAssetService
+public class AssetService(IRepository<Asset> repository, IMapper mapper, ILogger<AssetService> logger) : IAssetService
 {
 
-    public async Task<ResponseInfo<IEnumerable<Asset>>> GetAllAsync()
+    public async Task<ResponseInfo<IEnumerable<AssetDto>>> GetAllAsync()
     {
-        var assets = await repository.GetAllAsync();
-        return ResponseInfo<IEnumerable<Asset>>.Success(assets, HttpStatusCode.OK, "Return asset data");
+        var result = await repository.GetAllAsync();
+        var assetDto = mapper.Map<List<AssetDto>>(result);
+        return ResponseInfo<IEnumerable<AssetDto>>.Success(assetDto, HttpStatusCode.OK, "Return asset data");
     }
 
     // public async Task<ResponseInfo<Asset?>> GetAssetByIdAsync(int id)
@@ -22,17 +25,19 @@ public class AssetService(IRepository<Asset> repository, ILogger<AssetService> l
     //         : ResponseInfo<Asset?>.Failure("No asset information found", HttpStatusCode.NotFound);
     // }
 
-    public async Task<ResponseInfo<Asset>> CreateAsync(Asset asset)
+    public async Task<ResponseInfo<AssetDto>> CreateAsync(AssetDto assetDto)
     {
         try
         {
-            var newAsset = await repository.AddEntity(asset);
-            return ResponseInfo<Asset>.Success(newAsset , HttpStatusCode.Created,"Asset created successfully.");
+            var asset = mapper.Map<Asset>(assetDto);
+            var response = await repository.AddEntity(asset);
+            var newAssetDto = mapper.Map<AssetDto>(response);
+            return ResponseInfo<AssetDto>.Success(newAssetDto, HttpStatusCode.Created,"Asset created successfully.");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An error occured while processing the asset creation. Exception {Message}", ex.Message);
-            return ResponseInfo<Asset>.Failure($"An error occured while processing the asset creation. {ex.Message}",
+            return ResponseInfo<AssetDto>.Failure($"An error occured while processing the asset creation. {ex.Message}",
                 HttpStatusCode.BadRequest);
         }
     }

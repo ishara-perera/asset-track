@@ -18,6 +18,6 @@ namespace AssetTrack.API.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         
-        public List<Asset> Assets { get; set; } = new List<Asset>();
+        public List<Asset> Assets { get; init; } = [];
     }
 }
