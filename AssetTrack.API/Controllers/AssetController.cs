@@ -2,15 +2,18 @@
 using AssetTrack.API.DTOs;
 using AssetTrack.API.Models;
 using AssetTrack.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetTrack.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class AssetController(IAssetService assetService, ILogger<EmployeeController> logger) : ControllerBase
 {
     [HttpGet]
+    [Authorize(Roles="Admin,User")]
     public async Task<ActionResult<List<Asset>>> GetAll()
     {
         logger.LogInformation("Call the API service for get all asset information");
@@ -37,6 +40,7 @@ public class AssetController(IAssetService assetService, ILogger<EmployeeControl
     // }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Asset>> CreateAsset(AssetDto assetDto)
     {
         var assetResponse = await assetService.CreateAsync(assetDto);
