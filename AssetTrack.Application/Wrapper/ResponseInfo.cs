@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace AssetTrack.API.Wrapper;
+namespace AssetTrack.Application.Wrapper;
 
 public class ResponseInfo<T>
 {

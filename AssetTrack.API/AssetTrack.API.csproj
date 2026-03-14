@@ -28,4 +28,9 @@
         <None Remove=".dockerignore" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AssetTrack.Application\AssetTrack.Application.csproj" />
+      <ProjectReference Include="..\AssetTrack.Infrastructure\AssetTrack.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

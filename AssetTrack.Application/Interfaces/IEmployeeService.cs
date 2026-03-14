@@ -1,8 +1,8 @@
-﻿using AssetTrack.API.DTOs;
-using AssetTrack.API.Models;
-using AssetTrack.API.Wrapper;
+﻿using AssetTrack.Application.DTOs;
+using AssetTrack.Application.Wrapper;
+using AssetTrack.Domain.Entities;
 
-namespace AssetTrack.API.Services;
+namespace AssetTrack.Application.Interfaces;
 
 public interface IEmployeeService
 {

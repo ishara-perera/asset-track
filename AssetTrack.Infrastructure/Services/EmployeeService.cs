@@ -1,14 +1,14 @@
 ﻿using System.Net;
-using AssetTrack.API.Controllers;
-using AssetTrack.API.DTOs;
-using AssetTrack.API.Models;
-using AssetTrack.API.Repository;
-using AssetTrack.API.Wrapper;
+using AssetTrack.Application.DTOs;
+using AssetTrack.Application.Interfaces;
+using AssetTrack.Application.Wrapper;
+using AssetTrack.Domain.Entities;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
-namespace AssetTrack.API.Services;
+namespace AssetTrack.Infrastructure.Services;
 
-public class EmployeeService(IRepository<Employee> repository, IMapper mapper,ILogger<EmployeeController> logger) : IEmployeeService
+public class EmployeeService(IRepository<Employee> repository, IMapper mapper, ILogger<EmployeeService> logger) : IEmployeeService
 {
     public async Task<ResponseInfo<IEnumerable<EmployeeDto>>> GetAllEmployeeAsync()
     {

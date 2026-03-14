@@ -1,7 +1,8 @@
 ﻿using System.Net;
-using AssetTrack.API.DTOs;
 using AssetTrack.API.Models;
 using AssetTrack.API.Services;
+using AssetTrack.Application.DTOs;
+using AssetTrack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

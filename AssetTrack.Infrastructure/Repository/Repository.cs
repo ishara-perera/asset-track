@@ -1,7 +1,8 @@
-﻿using AssetTrack.API.Data;
+﻿using AssetTrack.Application.Interfaces;
+using AssetTrack.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace AssetTrack.API.Repository;
+namespace AssetTrack.Infrastructure.Repository;
 
 public class Repository<T>(AppDbContext context) : IRepository<T> where T : class
 {

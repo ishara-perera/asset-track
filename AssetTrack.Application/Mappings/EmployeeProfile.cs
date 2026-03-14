@@ -1,5 +1,6 @@
-﻿using AssetTrack.API.DTOs;
-using AssetTrack.API.Models;
+﻿using AssetTrack.API.Models;
+using AssetTrack.Application.DTOs;
+using AssetTrack.Domain.Entities;
 using AutoMapper;
 
 namespace AssetTrack.API.Services;

@@ -1,7 +1,8 @@
 using System.Text;
-using AssetTrack.API.Data;
-using AssetTrack.API.Repository;
-using AssetTrack.API.Services;
+using AssetTrack.Application.Interfaces;
+using AssetTrack.Infrastructure.Data;
+using AssetTrack.Infrastructure.Repository;
+using AssetTrack.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,10 @@ using Microsoft.IdentityModel.Tokens;
  */
 var builder = WebApplication.CreateBuilder(args); // Do the heavy lifting
 
-// 1. Get the connection string
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. Detect the server version (this prevents the "serverVersion" not found error)
 var serverVersion = ServerVersion.AutoDetect(connectionString);
 
-// 3. Register the DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, serverVersion));
 
@@ -88,24 +86,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build(); 
 
-// Loading Environment 
 if (app.Environment.IsDevelopment()) 
 {
-    // Automatic Migration for Development
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<AppDbContext>();
-        // This applies any pending migrations and creates the DB if it doesn't exist
-        await context.Database.MigrateAsync();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
-    }
-    
     app.UseSwagger();
     app.UseSwaggerUI();
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AssetTrack.API.DTOs;
+namespace AssetTrack.Application.DTOs;
 
 public sealed record AssetDto
 {

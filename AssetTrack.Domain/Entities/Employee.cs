@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AssetTrack.API.Models;
 
-namespace AssetTrack.API.Models
+namespace AssetTrack.Domain.Entities
 {
     public class Employee
     {

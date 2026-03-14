@@ -1,11 +1,12 @@
-﻿using AutoMapper;
-using System.Net;
-using AssetTrack.API.DTOs;
+﻿using System.Net;
 using AssetTrack.API.Models;
-using AssetTrack.API.Repository;
-using AssetTrack.API.Wrapper;
+using AssetTrack.Application.DTOs;
+using AssetTrack.Application.Interfaces;
+using AssetTrack.Application.Wrapper;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
 
-namespace AssetTrack.API.Services;
+namespace AssetTrack.Infrastructure.Services;
 
 public class AssetService(IRepository<Asset> repository, IMapper mapper, ILogger<AssetService> logger) : IAssetService
 {

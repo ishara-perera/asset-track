@@ -1,4 +1,4 @@
-﻿namespace AssetTrack.API.Repository;
+﻿namespace AssetTrack.Application.Interfaces;
 
 public interface IRepository<T> where T : class
 {

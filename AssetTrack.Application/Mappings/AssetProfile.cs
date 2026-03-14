@@ -1,8 +1,8 @@
-﻿using AssetTrack.API.DTOs;
-using AssetTrack.API.Models;
+﻿using AssetTrack.API.Models;
+using AssetTrack.Application.DTOs;
 using AutoMapper;
 
-namespace AssetTrack.API.Services;
+namespace AssetTrack.Application.Mappings;
 
 public class AssetProfile : Profile
 {

@@ -1,9 +1,10 @@
 ﻿using AssetTrack.API.Models;
+using AssetTrack.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace AssetTrack.API.Data;
+namespace AssetTrack.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<IdentityUser>(options)
 {
