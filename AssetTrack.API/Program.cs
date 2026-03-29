@@ -1,4 +1,5 @@
 using System.Text;
+using AssetTrack.API.ExceptionHandling;
 using AssetTrack.Application.Interfaces;
 using AssetTrack.Application.Services;
 using AssetTrack.Infrastructure.Data;
@@ -24,6 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, serverVersion));
 
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -92,6 +95,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();

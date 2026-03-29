@@ -4,11 +4,10 @@ using AssetTrack.Application.DTOs;
 using AssetTrack.Application.Interfaces;
 using AssetTrack.Application.Wrapper;
 using AutoMapper;
-using Microsoft.Extensions.Logging;
 
 namespace AssetTrack.Application.Services;
 
-public class AssetService(IRepository<Asset> repository, IMapper mapper, ILogger<AssetService> logger) : IAssetService
+public class AssetService(IRepository<Asset> repository, IMapper mapper) : IAssetService
 {
 
     public async Task<ResponseInfo<IEnumerable<AssetDto>>> GetAllAsync()
@@ -30,19 +29,10 @@ public class AssetService(IRepository<Asset> repository, IMapper mapper, ILogger
 
     public async Task<ResponseInfo<AssetDto>> CreateAsync(AssetDto assetDto)
     {
-        try
-        {
-            var asset = mapper.Map<Asset>(assetDto);
-            var response = await repository.AddEntity(asset);
-            var newAssetDto = mapper.Map<AssetDto>(response);
-            return ResponseInfo<AssetDto>.Success(newAssetDto, HttpStatusCode.Created,"Asset created successfully.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occured while processing the asset creation. Exception {Message}", ex.Message);
-            return ResponseInfo<AssetDto>.Failure($"An error occured while processing the asset creation. {ex.Message}",
-                HttpStatusCode.BadRequest);
-        }
+        var asset = mapper.Map<Asset>(assetDto);
+        var response = await repository.AddEntity(asset);
+        var newAssetDto = mapper.Map<AssetDto>(response);
+        return ResponseInfo<AssetDto>.Success(newAssetDto, HttpStatusCode.Created,"Asset created successfully.");
     }
         
     // public async Task<ResponseInfo<bool>> UpdateAssetAsync(Asset asset)

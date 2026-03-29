@@ -4,11 +4,10 @@ using AssetTrack.Application.Interfaces;
 using AssetTrack.Application.Wrapper;
 using AssetTrack.Domain.Entities;
 using AutoMapper;
-using Microsoft.Extensions.Logging;
 
 namespace AssetTrack.Application.Services;
 
-public class EmployeeService(IRepository<Employee> repository, IMapper mapper, ILogger<EmployeeService> logger) : IEmployeeService
+public class EmployeeService(IRepository<Employee> repository, IMapper mapper) : IEmployeeService
 {
     public async Task<ResponseInfo<IEnumerable<EmployeeDto>>> GetAllEmployeeAsync()
     {
@@ -27,22 +26,11 @@ public class EmployeeService(IRepository<Employee> repository, IMapper mapper, I
 
     public async Task<ResponseInfo<Employee>> CreateEmployeeAsync(EmployeeDto employeeDto)
     {
-        try
-        {
-            var employee = mapper.Map<Employee>(employeeDto);
-            var response = await repository.AddEntity(employee);
-            var newEmployeeDto = mapper.Map<Employee>(response);
-            return ResponseInfo<Employee>.Success(newEmployeeDto, HttpStatusCode.Created,
-                "Employee created successfully.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occured while processing the employee creation. Exception {Message}",
-                ex.Message);
-            return ResponseInfo<Employee>.Failure(
-                $"An error occured while processing the employee creation. {ex.Message}",
-                HttpStatusCode.BadRequest);
-        }
+        var employee = mapper.Map<Employee>(employeeDto);
+        var response = await repository.AddEntity(employee);
+        var newEmployeeDto = mapper.Map<Employee>(response);
+        return ResponseInfo<Employee>.Success(newEmployeeDto, HttpStatusCode.Created,
+            "Employee created successfully.");
     }
 
     // public async Task<ResponseInfo<bool>> UpdateEmployeeAsync(Employee employee)
