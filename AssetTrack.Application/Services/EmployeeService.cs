@@ -6,7 +6,7 @@ using AssetTrack.Domain.Entities;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 
-namespace AssetTrack.Infrastructure.Services;
+namespace AssetTrack.Application.Services;
 
 public class EmployeeService(IRepository<Employee> repository, IMapper mapper, ILogger<EmployeeService> logger) : IEmployeeService
 {

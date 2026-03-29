@@ -1,8 +1,8 @@
 using System.Text;
 using AssetTrack.Application.Interfaces;
+using AssetTrack.Application.Services;
 using AssetTrack.Infrastructure.Data;
 using AssetTrack.Infrastructure.Repository;
-using AssetTrack.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

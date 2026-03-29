@@ -6,7 +6,7 @@ using AssetTrack.Application.Wrapper;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 
-namespace AssetTrack.Infrastructure.Services;
+namespace AssetTrack.Application.Services;
 
 public class AssetService(IRepository<Asset> repository, IMapper mapper, ILogger<AssetService> logger) : IAssetService
 {
@@ -18,13 +18,15 @@ public class AssetService(IRepository<Asset> repository, IMapper mapper, ILogger
         return ResponseInfo<IEnumerable<AssetDto>>.Success(assetDto, HttpStatusCode.OK, "Return asset data");
     }
 
-    // public async Task<ResponseInfo<Asset?>> GetAssetByIdAsync(int id)
-    // {
-    //     var asset = await repository.GetAssetByIdAsync(id);
-    //     return asset != null
-    //         ? ResponseInfo<Asset?>.Success(asset, HttpStatusCode.OK, "Return asset data")
-    //         : ResponseInfo<Asset?>.Failure("No asset information found", HttpStatusCode.NotFound);
-    // }
+    public async Task<ResponseInfo<AssetDto?>> GetAssetByIdAsync(int id)
+    {
+        var asset = await repository.GetById(id);
+        if (asset == null)
+            return ResponseInfo<AssetDto?>.Failure("No asset information found", HttpStatusCode.NotFound);
+        var assetDto = mapper.Map<AssetDto>(asset);
+        return ResponseInfo<AssetDto?>.Success(assetDto, HttpStatusCode.OK, "Return asset data");
+
+    }
 
     public async Task<ResponseInfo<AssetDto>> CreateAsync(AssetDto assetDto)
     {

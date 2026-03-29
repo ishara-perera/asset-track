@@ -7,7 +7,7 @@ public interface IAssetService
 {
   Task<ResponseInfo<IEnumerable<AssetDto>>> GetAllAsync();
 
-    // Task<ResponseInfo<Asset?>> GetAssetByIdAsync(int id);
+    Task<ResponseInfo<AssetDto?>> GetAssetByIdAsync(int id);
 
     Task<ResponseInfo<AssetDto>> CreateAsync(AssetDto assetDto);
 

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using AssetTrack.API.Models;
-using AssetTrack.API.Services;
 using AssetTrack.Application.DTOs;
 using AssetTrack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +14,10 @@ public class AssetController(IAssetService assetService, ILogger<EmployeeControl
 {
     [HttpGet]
     [Authorize(Roles="Admin,User")]
-    public async Task<ActionResult<List<Asset>>> GetAll()
+    public async Task<ActionResult<List<AssetDto>>> GetAll()
     {
         logger.LogInformation("Call the API service for get all asset information");
+        
         var assetResponse = await assetService.GetAllAsync();
         if (assetResponse.IsSuccess) return Ok(assetResponse);
         if (assetResponse.StatusCode == HttpStatusCode.NotFound)
@@ -27,23 +27,25 @@ public class AssetController(IAssetService assetService, ILogger<EmployeeControl
     }
     
 
-    // [HttpGet("{id}")]
-    // public async Task<ActionResult<Asset>> GetAssetById(int id)
-    // {
-    //     var assetResponse = await assetService.GetAssetByIdAsync(id);
-    //     if (assetResponse.IsSuccess) return Ok(assetResponse);
-    //     return assetResponse.StatusCode switch
-    //     {
-    //         HttpStatusCode.NotFound => NotFound(assetResponse),
-    //         HttpStatusCode.BadRequest => BadRequest(assetResponse),
-    //         _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
-    //     };
-    // }
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AssetDto>> GetAssetById(int id)
+    {
+        var assetResponse = await assetService.GetAssetByIdAsync(id);
+        if (assetResponse.IsSuccess) return Ok(assetResponse);
+        return assetResponse.StatusCode switch
+        {
+            HttpStatusCode.NotFound => NotFound(assetResponse),
+            HttpStatusCode.BadRequest => BadRequest(assetResponse),
+            _ => StatusCode((int)assetResponse.StatusCode, assetResponse)
+        };
+    }
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Asset>> CreateAsset(AssetDto assetDto)
     {
+        logger.LogInformation("Call the API service for get all asset information");
+
         var assetResponse = await assetService.CreateAsync(assetDto);
         if (assetResponse.IsSuccess) return Ok(assetResponse);
         return assetResponse.StatusCode switch
